@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Hackathon 20XX — 90 Min Challenge</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Logo (optional) -->
+    <div class="logo-wrap">
+      <img src="logo.png" alt="Career Direction Logo" class="logo" />
+    </div>
+
+    <h1>Global Hackathon 20XX — 90 Min Challenge</h1>
+    <p class="subtitle">30 Questions | 100 Marks (Normalized from 105)</p>
+
+    <!-- Lock info -->
+    <div id="lockMessage" class="lock-message hidden"></div>
+
+    <!-- Pre-start form -->
+    <div id="startSection">
+      <p class="info">
+        Enter your details to start the hackathon. Once started, the 90-minute timer will begin immediately.
+      </p>
+
+      <form id="userForm">
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="field">
+          <label for="email">Email ID</label>
+          <input type="email" id="email" required />
+        </div>
+
+        <button type="submit" id="startBtn">Start Hackathon</button>
+      </form>
+
+      <!-- Admin reset -->
+      <details class="admin-box">
+        <summary>Admin Reset (20-Day Attempt Lock)</summary>
+        <div class="admin-inner">
+          <input type="password" id="adminCode" placeholder="Enter reset code" />
+          <button type="button" id="adminResetBtn">Reset Lock</button>
+          <p class="admin-hint">
+            Default code: <code>CDRESET2025</code> (change this in <strong>script.js</strong> if needed).
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="quizSection" class="hidden">
+      <div class="top-bar">
+        <div id="timer">Time Left: 90:00</div>
+        <div id="userInfoDisplay"></div>
+      </div>
+
+      <p class="note">
+        All questions are shown below. Questions are shuffled each attempt.
+        Back button, copy/paste, and right-click are restricted during the test.
+      </p>
+
+      <form id="quizForm">
+        <div id="questionsContainer"></div>
+
+        <div class="submit-wrap">
+          <button type="button" id="submitBtn">Submit Hackathon</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Result Section -->
+    <div id="resultSection" class="hidden">
+      <h2>Hackathon Result</h2>
+      <p id="scoreText"></p>
+      <p id="summaryText"></p>
+      <p id="remarkText" class="remark"></p>
+    </div>
+
+  </div>
+
+</body>
+</html>
