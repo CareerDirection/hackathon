@@ -1,0 +1,310 @@
+/* ====== Global Reset ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #ffffff;
+  color: #000;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  text-align: center;
+}
+
+/* Only one "window" at a time */
+.pageSection {
+  display: none;
+  width: 100%;
+}
+
+.pageSection.active {
+  display: block;
+}
+
+.pageContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 10px 40px;
+}
+
+/* ====== Logo Styling ====== */
+.logoImage {
+  width: 260px;
+  margin-bottom: 10px;
+}
+
+/* ====== Headings ====== */
+h1 { font-size: 28px; font-weight: 900; margin-bottom: 10px; }
+h2 { font-size: 22px; font-weight: 800; margin: 8px 0; }
+h3 { font-size: 18px; margin-bottom: 10px; }
+
+/* ====== Panels / Boxes ====== */
+.panel {
+  width: 100%;
+  max-width: 900px;
+  margin: 15px auto;
+  border: 2px solid #000;
+  border-radius: 6px;
+  padding: 15px 18px;
+  text-align: left;
+  background: #f8f9fb;
+}
+
+.instructionsPanel { font-size: 16px; font-weight: bold; line-height: 1.6; }
+
+.allTheBest {
+  font-size: 20px;
+  color: #117a00;
+  font-weight: 900;
+  margin-top: 10px;
+}
+
+/* ===== Device Warning Panel ===== */
+.devicePanel { background: #f2f2f2; border-color: #888; }
+.deviceTitle { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.deviceText { font-size: 14px; font-weight: 600; }
+
+/* ====== Form Panel (Home) ====== */
+.formPanel { background: #ffffff; }
+.formRow { margin-bottom: 12px; }
+
+.formRow input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #444;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.formRowInline { display: flex; gap: 10px; align-items: center; }
+.formRowInline input { flex: 1; }
+.formRowInline button { padding: 12px 20px; }
+
+.formRowInlineSingle { display: flex; gap: 10px; align-items: center; }
+.formRowInlineSingle input { flex: 1; }
+
+/* ===== Buttons ===== */
+button {
+  background: #0A6CF1;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+button:hover { background: #044fad; }
+
+.btnDisabled {
+  background: #999 !important;
+  cursor: not-allowed !important;
+}
+
+/* ===== Admin Box ===== */
+.adminPanel { background: #fffef5; }
+.adminPanel h4 { margin-bottom: 10px; }
+.adminNote { font-size: 13px; color: #c30000; margin-top: 8px; }
+
+/* ===== Title Panel ===== */
+.titlePanel { text-align: center; background: #f0f3ff; }
+
+/* ====== Exam Header ====== */
+.examHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 15px auto 10px;
+  max-width: 900px;
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 50;
+  padding-top: 10px;
+}
+
+.leftInfo {
+  text-align: left;
+  max-width: 55%;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.infoRow { display: flex; margin-bottom: 6px; }
+.infoRow .label { width: 95px; }
+.infoRow .value { flex: 1; }
+.messageRow .value { font-style: italic; }
+
+/* Timer */
+.timerValue { color: #007500; font-weight: 800; }
+#timer.timerDanger { color: #b20000 !important; }
+
+/* Warnings */
+.warningValue { font-weight: 800; }
+.warningGreen { color: #007500; }
+.warningOrange { color: #e87800; }
+.warningRed { color: #b20000; }
+
+@keyframes warningBlinkAnim {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.warningBlink { animation: warningBlinkAnim 0.8s infinite; }
+
+/* ===== Camera Box ===== */
+.cameraBox {
+  width: 320px;
+  height: 230px;
+  border: 3px solid #000;
+  background: #000;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#cameraFeed { width: 100%; height: 100%; object-fit: cover; }
+
+/* ===== Questions Area ===== */
+.questionsPanel { background: #ffffff; }
+
+.questionInstruction {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+#questionsBox {
+  max-height: 430px;
+  overflow-y: auto;
+  padding-right: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+/* Scrollbar */
+#questionsBox::-webkit-scrollbar { width: 8px; }
+#questionsBox::-webkit-scrollbar-thumb { background: #bbb; border-radius: 4px; }
+
+.questionBlock {
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Options */
+.optionRow {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  padding: 6px 4px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.optionRow:hover { background: #f1f5ff; cursor: pointer; }
+
+.optionRow input[type="radio"] { transform: scale(1.1); }
+.optionRow label { margin-left: 8px; font-size: 16px; font-weight: 500; }
+
+/* Next Button */
+.nextBtn {
+  display: block;
+  width: 180px;
+  margin: 12px 0 0 auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.nextBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+
+/* ===== Result Page ===== */
+.resultStudentText {
+  white-space: pre-wrap;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 10px auto 20px;
+  max-width: 900px;
+  text-align: left;
+}
+
+.resultMainPanel { text-align: center; background: #ffffff; }
+
+.finalScore {
+  font-size: 32px;
+  font-weight: 900;
+  margin: 10px 0;
+  color: #0A6CF1;
+}
+
+.resultMessage { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
+
+/* Violation */
+.violationBox {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  padding: 12px 16px;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.violationTitle { color: #b20000; font-weight: 700; margin-bottom: 8px; }
+.violationList { margin-left: 18px; margin-bottom: 8px; }
+.violationList li { font-size: 15px; }
+.violationNote { font-size: 14px; margin-top: 4px; }
+
+/* Toast */
+.toastWarning {
+  position: fixed;
+  top: 20px;
+  right: -350px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  z-index: 99999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  color: #fff;
+  transition: right .35s ease-out;
+}
+
+.toastWarning.show { right: 20px; }
+
+.toastWarning.default { background:#444; }
+.toastWarning.tab { background:#B20000; }
+.toastWarning.audio { background:#FF7A00; }
+.toastWarning.camera { background:#5A00A0; }
+.toastWarning.keyboard { background:#0056D6; }
+.toastWarning.devtools { background:#111; }
+
+/* Footer */
+footer {
+  margin-top: 24px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Utility */
+.hidden { display: none; }
+
+/* Responsive Safety */
+@media (max-width: 900px) {
+  .examHeader { flex-direction: column; align-items: center; }
+  .leftInfo { max-width: 100%; margin-bottom: 12px; }
+  .cameraBox { width: 100%; max-width: 320px; }
+}
