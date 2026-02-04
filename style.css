@@ -1,0 +1,26 @@
+body { font-family: Arial; text-align:center; margin:0; }
+.pageSection { display:none; }
+.pageSection.active { display:block; }
+.pageContainer { max-width:1000px; margin:auto; padding:20px; }
+.logoImage { width:220px; margin-bottom:10px; }
+
+.panel { background:#f8f9fb; padding:15px; border:2px solid #000; border-radius:6px; margin:15px auto; max-width:900px; }
+
+.formRow { margin-bottom:12px; }
+.formRow input { width:100%; padding:10px; border:2px solid #444; border-radius:4px; }
+
+button { background:#0A6CF1; color:white; border:none; padding:10px 16px; border-radius:4px; cursor:pointer; }
+
+.examHeader { display:flex; justify-content:space-between; align-items:center; max-width:900px; margin:auto; }
+.cameraBox { width:280px; height:200px; border:3px solid #000; background:#000; }
+#cameraFeed { width:100%; height:100%; object-fit:cover; }
+
+.questionBlock { margin-bottom:15px; text-align:left; }
+.optionRow { margin-top:6px; }
+
+.nextBtn { display:block; margin:15px auto 0 auto; width:200px; }
+
+.resultBadgeRow img { width:120px; margin-bottom:10px; }
+.finalScore { font-size:32px; color:#0A6CF1; }
+.resultBreakdown { text-align:left; max-width:500px; margin:10px auto; font-weight:600; line-height:1.8; }
+.resultStudentText { font-weight:600; margin-bottom:15px; }
