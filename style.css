@@ -1,0 +1,82 @@
+body { font-family: Arial, sans-serif; margin: 0; text-align: center; }
+
+.pageSection { display: none; }
+.pageSection.active { display: block; }
+
+.pageContainer { max-width: 1000px; margin: auto; padding: 20px; }
+
+.logoImage { width: 220px; margin-bottom: 10px; }
+
+.panel {
+  background: #f8f9fb;
+  padding: 15px;
+  border: 2px solid #000;
+  border-radius: 6px;
+  margin: 15px auto;
+  max-width: 900px;
+  text-align: left;
+}
+
+.instructionsPanel { font-weight: bold; line-height: 1.6; }
+.allTheBest { color: green; font-weight: bold; margin-top: 10px; }
+
+.formRow input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #444;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.formRowInline { display: flex; gap: 10px; }
+.formRowInlineSingle { display: flex; gap: 10px; }
+
+button {
+  background: #0A6CF1;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.examHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 900px;
+  margin: auto;
+}
+
+.leftInfo { font-weight: bold; }
+
+.cameraBox {
+  width: 280px;
+  height: 200px;
+  border: 3px solid #000;
+  background: #000;
+}
+#cameraFeed { width: 100%; height: 100%; object-fit: cover; }
+
+.questionBlock { margin-bottom: 15px; }
+.optionRow { margin-top: 6px; }
+
+.nextBtn { display: block; margin: 15px auto 0 auto; width: 200px; }
+
+.resultBadgeRow img { width: 120px; margin-bottom: 10px; }
+
+.finalScore { font-size: 32px; color: #0A6CF1; }
+
+.resultBreakdown {
+  text-align: left;
+  max-width: 500px;
+  margin: 10px auto;
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+.resultStudentText { font-weight: 600; margin-bottom: 15px; }
+
+.adminNote { color: red; font-size: 13px; }
+
+footer { margin-top: 20px; font-weight: bold; }
