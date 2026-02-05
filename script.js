@@ -1,7 +1,9 @@
 // ================= CONFIG =================
 const EXAM_DURATION_MIN = 40;
-const QUESTIONS_PER_EXAM = 30;   // 🔥 Change this when you add more questions
+const QUESTIONS_PER_EXAM = 30;
 const MAX_WARNINGS = 10;
+const LOCK_DAYS = 15;
+const ADMIN_RESET_CODE = "JJ5533!jj5533";
 const WRONG_PENALTY = 2;
 
 // ================= DEVICE CHECK =================
@@ -9,7 +11,7 @@ function isMobileDevice() {
   return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 900;
 }
 
-// ================= SAMPLE QUESTION BANK (ADD MORE BELOW) =================
+// ================= SAMPLE QUESTIONS =================
 const questionBank = [
 {id:"Q1",marks:4,text:"Worst-case search in separate chaining?",options:["A) O(1)","B) O(log n)","C) O(n)","D) O(n log n)"],correct:"C"},
 {id:"Q2",marks:4,text:"BST traversal for descending order?",options:["A) Inorder","B) Preorder","C) Reverse Inorder","D) Postorder"],correct:"C"},
@@ -345,156 +347,181 @@ const questionBank = [
 ];
 
 // ================= STATE =================
-let chosenQuestions = [], userAnswers = {}, remainingSeconds = EXAM_DURATION_MIN * 60;
-let timerId = null, warnings = 0, inExam = false, quizFinished = false;
-let currentUser = null, cameraStream = null, audioCtx = null;
+let chosenQuestions=[], userAnswers={}, remainingSeconds=EXAM_DURATION_MIN*60;
+let timerId=null, warnings=0, inExam=false, quizFinished=false;
+let currentUser=null, cameraStream=null, audioCtx=null;
 
 const $ = id => document.getElementById(id);
 
 // ================= HELPERS =================
-function showSection(id) {
-  document.querySelectorAll(".pageSection").forEach(s => s.classList.remove("active"));
+function showSection(id){
+  document.querySelectorAll(".pageSection").forEach(s=>s.classList.remove("active"));
   $(id).classList.add("active");
 }
-function shuffle(arr) { arr.sort(() => Math.random() - 0.5); }
-function formatTime(s) { return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+function shuffle(arr){ arr.sort(()=>Math.random()-0.5); }
+function formatTime(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+
+// ================= LOCK SYSTEM =================
+function lockKey(email){ return "hack_lock_"+email; }
+
+function isLocked(email){
+  const exp = parseInt(localStorage.getItem(lockKey(email))||"0");
+  return Date.now() < exp;
+}
+
+function setLock(email){
+  const expiry = Date.now() + LOCK_DAYS*24*60*60*1000;
+  localStorage.setItem(lockKey(email), expiry);
+}
+
+function clearLock(email){
+  localStorage.removeItem(lockKey(email));
+}
+
+// ADMIN RESET
+$("adminResetBtn").addEventListener("click", ()=>{
+  const code = $("resetCode").value.trim();
+  const email = $("email").value.trim();
+  if(code===ADMIN_RESET_CODE && email){
+    clearLock(email);
+    alert("Lock reset successful.");
+  } else alert("Invalid reset code or email.");
+});
+
+// ================= AUDIO BEEP =================
+function beep(){
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.frequency.value=900; gain.gain.value=0.3;
+  osc.start(); osc.stop(audioCtx.currentTime+0.2);
+}
+
+// ================= WARNING POPUP =================
+function showWarningPopup(msg){
+  const div=document.createElement("div");
+  div.className="warningPopup";
+  div.textContent="⚠ "+msg;
+  document.body.appendChild(div);
+  setTimeout(()=>div.remove(),3000);
+}
 
 // ================= CAMERA =================
-async function startCamera() {
-  try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
-    $("cameraFeed").srcObject = cameraStream;
-  } catch {
-    issueWarning("Camera blocked");
-  }
+async function startCamera(){
+  try{
+    cameraStream=await navigator.mediaDevices.getUserMedia({video:true});
+    $("cameraFeed").srcObject=cameraStream;
+  }catch{ issueWarning("Camera blocked"); }
 }
-function stopCamera() {
-  if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+function stopCamera(){
+  if(cameraStream) cameraStream.getTracks().forEach(t=>t.stop());
 }
 
 // ================= WARNINGS =================
-function issueWarning(msg) {
-  if (!inExam || quizFinished) return;
+function issueWarning(msg){
+  if(!inExam||quizFinished) return;
   warnings++;
-  $("warningCount").textContent = warnings;
-  if (warnings >= MAX_WARNINGS) finishExam();
+  $("warningCount").textContent=warnings;
+  showWarningPopup(msg);
+  beep();
+  if(warnings>=MAX_WARNINGS) finishExam();
 }
 
-document.addEventListener("visibilitychange", () => { if (document.hidden) issueWarning("Tab switch detected"); });
-window.addEventListener("blur", () => issueWarning("Window focus lost"));
+document.addEventListener("visibilitychange",()=>{ if(document.hidden) issueWarning("Tab switch detected"); });
+window.addEventListener("blur",()=>issueWarning("Window focus lost"));
 
 // ================= TIMER =================
-function startTimer() {
-  $("timer").textContent = formatTime(remainingSeconds);
-  timerId = setInterval(() => {
+function startTimer(){
+  $("timer").textContent=formatTime(remainingSeconds);
+  timerId=setInterval(()=>{
     remainingSeconds--;
-    $("timer").textContent = formatTime(remainingSeconds);
-    if (remainingSeconds <= 0) finishExam();
-  }, 1000);
+    $("timer").textContent=formatTime(remainingSeconds);
+    if(remainingSeconds<=0) finishExam();
+  },1000);
 }
 
 // ================= START BUTTON =================
-$("startBtn").addEventListener("click", () => {
-  if (isMobileDevice()) {
-    alert("Hackathon allowed only on Desktop/Laptop.");
-    return;
-  }
+$("startBtn").addEventListener("click",()=>{
+  if(isMobileDevice()) return alert("Hackathon allowed only on Desktop/Laptop.");
+
+  const email=$("email").value.trim();
+  if(isLocked(email)) return alert("You have already attended. Try again after 15 days.");
+
   startExam();
 });
 
 // ================= START EXAM =================
-function startExam() {
-  const name = $("fullName").value.trim();
-  const email = $("email").value.trim();
+function startExam(){
+  const name=$("fullName").value.trim();
+  const email=$("email").value.trim();
+  if(!name||!email) return alert("Enter required details");
 
-  if (!name || !email) return alert("Enter required details");
-
-  currentUser = { name, email };
-
+  currentUser={name,email};
   shuffle(questionBank);
-  chosenQuestions = questionBank.slice(0, QUESTIONS_PER_EXAM);
+  chosenQuestions=questionBank.slice(0,QUESTIONS_PER_EXAM);
 
   loadQuestions();
   showSection("examSection");
   startTimer();
   startCamera();
-  inExam = true;
+  inExam=true;
 }
 
 // ================= LOAD QUESTIONS =================
-function loadQuestions() {
-  const box = $("questionsBox");
-  box.innerHTML = "";
-
-  chosenQuestions.forEach((q, idx) => {
-    const div = document.createElement("div");
-    div.className = "questionBlock";
-    div.innerHTML = `<b>Q${idx + 1}. ${q.text}</b>` +
-      q.options.map(opt =>
-        `<div class="optionRow">
-          <label><input type="radio" name="${q.id}" value="${opt[0]}"> ${opt}</label>
-        </div>`).join("");
-
+function loadQuestions(){
+  const box=$("questionsBox"); box.innerHTML="";
+  chosenQuestions.forEach((q,idx)=>{
+    const div=document.createElement("div");
+    div.className="questionBlock";
+    div.innerHTML=`<b>Q${idx+1}. ${q.text}</b>`+
+      q.options.map(opt=>`<div class="optionRow">
+      <label><input type="radio" name="${q.id}" value="${opt[0]}"> ${opt}</label></div>`).join("");
     box.appendChild(div);
   });
-
-  box.addEventListener("change", e => {
-    userAnswers[e.target.name] = e.target.value;
+  box.addEventListener("change",e=>{
+    userAnswers[e.target.name]=e.target.value;
     updateCounts();
   });
-
   updateCounts();
 }
 
-function updateCounts() {
-  const answered = Object.keys(userAnswers).length;
-  $("answeredCount").textContent = answered;
-  $("unansweredCount").textContent = QUESTIONS_PER_EXAM - answered;
+function updateCounts(){
+  const answered=Object.keys(userAnswers).length;
+  $("answeredCount").textContent=answered;
+  $("unansweredCount").textContent=QUESTIONS_PER_EXAM-answered;
 }
 
 // ================= FINISH EXAM =================
-function finishExam() {
-  if (quizFinished) return;
-  quizFinished = true;
-  inExam = false;
-  clearInterval(timerId);
-  stopCamera();
+function finishExam(){
+  if(quizFinished) return;
+  quizFinished=true; inExam=false;
+  clearInterval(timerId); stopCamera();
 
-  let rawScore = 0;
-  let totalPossibleMarks = 0;
-  let wrong = 0;
-  let unanswered = 0;
-  let correct = 0;
+  let rawScore=0,totalPossibleMarks=0,wrong=0,unanswered=0,correct=0;
 
-  chosenQuestions.forEach(q => {
-    totalPossibleMarks += q.marks;
-
-    if (userAnswers[q.id] === undefined) {
-      unanswered++;
-    } else if (userAnswers[q.id] === q.correct) {
-      rawScore += q.marks;
-      correct++;
-    } else {
-      wrong++;
-      rawScore -= WRONG_PENALTY;
-    }
+  chosenQuestions.forEach(q=>{
+    totalPossibleMarks+=q.marks;
+    if(userAnswers[q.id]===undefined) unanswered++;
+    else if(userAnswers[q.id]===q.correct){ rawScore+=q.marks; correct++; }
+    else{ wrong++; rawScore-=WRONG_PENALTY; }
   });
 
-  // 🔥 SCORE NORMALIZED TO 100
-  let finalScore = Math.max(0, Math.round((rawScore / totalPossibleMarks) * 100));
+  let finalScore=Math.max(0,Math.round((rawScore/totalPossibleMarks)*100));
+
+  setLock(currentUser.email); // 🔒 APPLY 15 DAY LOCK
 
   showSection("resultSection");
-
-  $("finalScore").textContent = `Final Score: ${finalScore} / 100`;
-  $("resultStudent").innerHTML = `${currentUser.name} | ${currentUser.email}`;
-  $("resultBreakdown").innerHTML = `
-    Attempted: ${QUESTIONS_PER_EXAM - unanswered}<br>
+  $("finalScore").textContent=`Final Score: ${finalScore} / 100`;
+  $("resultStudent").innerHTML=`${currentUser.name} | ${currentUser.email}`;
+  $("resultBreakdown").innerHTML=`
+    Attempted: ${QUESTIONS_PER_EXAM-unanswered}<br>
     Not Attempted: ${unanswered}<br>
     Correct: ${correct}<br>
     Wrong: ${wrong}<br>
-    Negative Marks: ${wrong * WRONG_PENALTY}
+    Negative Marks: ${wrong*WRONG_PENALTY}
   `;
 }
 
 // ================= SUBMIT BUTTON =================
-$("nextSetBtn").addEventListener("click", finishExam);
+$("nextSetBtn").addEventListener("click",finishExam);
