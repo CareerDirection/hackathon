@@ -495,3 +495,6 @@ function finishExam() {
     Negative Marks: ${wrong * WRONG_PENALTY}
   `;
 }
+
+// ================= SUBMIT BUTTON =================
+$("nextSetBtn").addEventListener("click", finishExam);
